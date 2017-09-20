@@ -8,6 +8,8 @@ const models = require('./models');
 
 const app = express();
 
+const db = require('./db/index.js');
+
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
 app.use(partials());
@@ -78,7 +80,26 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
-
+app.post('/signup', (req, res, next) => {
+  var message = req.body;
+  var salt = utils.createRandom32String();
+  message.salt = salt;
+  message.password = utils.createHash(req.body.password, salt);
+  db.query('SELECT * FROM users WHERE username = ?', message.username, (err, results) => {
+    if (results.length === 0) {
+      db.query('INSERT INTO users SET ?', message, (err, results) => {
+        if (err) {
+          console.log('ERROR:', err);
+          return;
+        } else {
+          res.redirect('/');
+        }
+      });
+    } else {
+      res.redirect('/signup');
+    }
+  }); 
+});
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail
