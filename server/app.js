@@ -9,6 +9,11 @@ const models = require('./models');
 const app = express();
 
 const db = require('./db/index.js');
+const session = require('./models/session.js');
+const user = require('./models/user.js');
+
+var Users = require('./models/model.js');
+Users = new Users('users');
 
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
@@ -81,24 +86,18 @@ app.post('/links',
 /************************************************************/
 
 app.post('/signup', (req, res, next) => {
-  var message = req.body;
-  var salt = utils.createRandom32String();
-  message.salt = salt;
-  message.password = utils.createHash(req.body.password, salt);
-  db.query('SELECT * FROM users WHERE username = ?', message.username, (err, results) => {
-    if (results.length === 0) {
-      db.query('INSERT INTO users SET ?', message, (err, results) => {
-        if (err) {
-          console.log('ERROR:', err);
-          return;
-        } else {
-          res.redirect('/');
-        }
-      });
+  Users.getAll({username: req.body.username}).then(value => {
+    if (value.length === 0) {
+      user.create(req.body.username, req.body.password);
+      res.sendStatus(201);
     } else {
       res.redirect('/signup');
     }
-  }); 
+  });
+}); 
+
+app.post('/login', (res, req, next) => {
+  
 });
 
 /************************************************************/
