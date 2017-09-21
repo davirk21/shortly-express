@@ -86,18 +86,28 @@ app.post('/links',
 /************************************************************/
 
 app.post('/signup', (req, res, next) => {
-  Users.getAll({username: req.body.username}).then(value => {
+  Users.getAll({username: req.body.username}).then(value => { //helper function get all 
     if (value.length === 0) {
       user.create(req.body.username, req.body.password);
-      res.sendStatus(201);
+      res.redirect('/');
     } else {
       res.redirect('/signup');
     }
   });
 }); 
 
-app.post('/login', (res, req, next) => {
-  
+app.post('/login', (req, res, next) => {
+  Users.getAll({username: req.body.username}).then(results => {
+    if (results.length > 0) {
+      if (user.compare(req.body.password, results[0].password, results[0].salt)) {
+        res.redirect('/');
+      } else {
+        res.redirect('/login');
+      }
+    } else {
+      res.redirect('/login');
+    }
+  });
 });
 
 /************************************************************/

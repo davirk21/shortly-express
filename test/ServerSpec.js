@@ -208,8 +208,7 @@ describe('', function() {
     });
   });
 
-  
-describe('Account Login:', function() {
+  describe('Account Login:', function() {
 
     beforeEach(function(done) {
       var options = {
