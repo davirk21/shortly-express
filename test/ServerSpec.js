@@ -410,6 +410,8 @@ describe('', function() {
 
           createSession(requestWithCookies, secondResponse, function() {
             var session = requestWithCookies.session;
+            console.log('SESSION:', session);
+            console.log('TYPEOF:', typeof session);
             expect(session).to.be.an('object');
             expect(session.hash).to.exist;
             expect(session.hash).to.be.cookie;
@@ -446,6 +448,7 @@ describe('', function() {
 
           createSession(requestWithoutCookie, response, function() {
             var hash = requestWithoutCookie.session.hash;
+           
             db.query('UPDATE sessions SET userId = ? WHERE hash = ?', [userId, hash], function(error, result) {
 
               var secondResponse = httpMocks.createResponse();

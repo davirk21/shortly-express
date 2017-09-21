@@ -13,8 +13,8 @@ const db = require('./db/index.js');
 const session = require('./models/session.js');
 const user = require('./models/user.js');
 
-var Users = require('./models/model.js');
-Users = new Users('users');
+var UsersTable = require('./models/model.js');
+UsersTable = new UsersTable('users');
 
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
@@ -89,7 +89,7 @@ app.post('/links',
 /************************************************************/
 
 app.post('/signup', (req, res, next) => {
-  Users.getAll({username: req.body.username}).then(value => { //helper function get all 
+  UsersTable.getAll({username: req.body.username}).then(value => { //helper function get all 
     if (value.length === 0) {
       user.create(req.body.username, req.body.password);
       res.redirect('/');
@@ -100,7 +100,7 @@ app.post('/signup', (req, res, next) => {
 }); 
 
 app.post('/login', (req, res, next) => {
-  Users.getAll({username: req.body.username}).then(results => {
+  UsersTable.getAll({username: req.body.username}).then(results => {
     if (results.length > 0) {
       if (user.compare(req.body.password, results[0].password, results[0].salt)) {
         res.redirect('/');
